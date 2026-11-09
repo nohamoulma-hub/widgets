@@ -229,9 +229,15 @@ public final class WidgetHost {
         self.actions = actions
 
         placePanel()
-        expansion = state.$expanded.dropFirst().sink { [weak self] expanded in
-            self?.applySize(expanded: expanded, animated: true)
-        }
+        // Le redimensionnement est différé d'un tour de boucle (receive(on:)): @Published prévient
+        // avant d'enregistrer la nouvelle valeur, et une fenêtre animée relancerait SwiftUI trop tôt,
+        // qui relirait l'ancienne valeur et resterait bloqué sur le résumé.
+        expansion = state.$expanded
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] expanded in
+                self?.applySize(expanded: expanded, animated: true)
+            }
     }
 
     public func show() {
