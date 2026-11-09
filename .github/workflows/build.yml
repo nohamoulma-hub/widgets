@@ -20,14 +20,32 @@ jobs:
 
       - name: Collecteur sur des projets d'essai
         run: |
-          mkdir -p "$RUNNER_TEMP/essai/alpha" "$RUNNER_TEMP/essai/beta"
+          mkdir -p "$RUNNER_TEMP/essai/alpha" "$RUNNER_TEMP/essai/beta" "$RUNNER_TEMP/essai/gamma" "$RUNNER_TEMP/essai/delta"
           printf -- '- [x] Une\n- [x] Deux\n- [ ] Trois\n- [ ] Quatre\n' > "$RUNNER_TEMP/essai/alpha/TACHES.md"
           printf '# Projet sans cases\n' > "$RUNNER_TEMP/essai/beta/README.md"
+          printf -- '- [x] A\n- [x] B\n- [x] C\n- [x] D\n- [ ] Écrire la page de connexion\n' > "$RUNNER_TEMP/essai/gamma/TACHES.md"
+          printf -- '- [x] A\n- [ ] B\n- [ ] C\n- [ ] D\n- [ ] E\n' > "$RUNNER_TEMP/essai/delta/TACHES.md"
           printf '{"roots":["%s"],"exclude":[]}\n' "$RUNNER_TEMP/essai" > "$RUNNER_TEMP/config.json"
           python3 collector/collect_projects.py --config "$RUNNER_TEMP/config.json" --verbose
 
       - name: Lecture des données par le widget
         run: dist/DeskWidgets.app/Contents/MacOS/DeskWidgets --check
+
+      - name: Capture d'écran du widget lancé
+        continue-on-error: true
+        run: |
+          dist/DeskWidgets.app/Contents/MacOS/DeskWidgets &
+          sleep 6
+          screencapture -x widget.png
+          ls -la widget.png
+          pkill DeskWidgets || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capture
+          path: widget.png
+          if-no-files-found: ignore
 
       - name: Archive de l'app
         run: ditto -c -k --keepParent dist/DeskWidgets.app DeskWidgets.zip
