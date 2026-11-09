@@ -1,0 +1,38 @@
+# Compile le widget sur un Mac fourni par GitHub et vérifie que les données se lisent.
+# Si ce test passe, le code compile. Il ne vérifie pas l'affichage.
+name: build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version de Swift
+        run: swift --version
+
+      - name: Compilation et création de l'app
+        run: bash scripts/build_app.sh
+
+      - name: Collecteur sur des projets d'essai
+        run: |
+          mkdir -p "$RUNNER_TEMP/essai/alpha" "$RUNNER_TEMP/essai/beta"
+          printf -- '- [x] Une\n- [x] Deux\n- [ ] Trois\n- [ ] Quatre\n' > "$RUNNER_TEMP/essai/alpha/TACHES.md"
+          printf '# Projet sans cases\n' > "$RUNNER_TEMP/essai/beta/README.md"
+          printf '{"roots":["%s"],"exclude":[]}\n' "$RUNNER_TEMP/essai" > "$RUNNER_TEMP/config.json"
+          python3 collector/collect_projects.py --config "$RUNNER_TEMP/config.json" --verbose
+
+      - name: Lecture des données par le widget
+        run: dist/DeskWidgets.app/Contents/MacOS/DeskWidgets --check
+
+      - name: Archive de l'app
+        run: ditto -c -k --keepParent dist/DeskWidgets.app DeskWidgets.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DeskWidgets-app
+          path: DeskWidgets.zip

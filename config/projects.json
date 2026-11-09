@@ -1,0 +1,11 @@
+{
+  "_aide": "Dossiers à parcourir, projets à ignorer, noms plus courts pour le widget.",
+  "roots": ["~/projets dev"],
+  "exclude": ["IA - Brain", "widgets"],
+  "display_names": {
+    "Holberton-school-Hackathon-Le_Bras": "Hackathon Le Bras",
+    "Holberton-school-Hackathon-le-Sosie": "Hackathon Le Sosie",
+    "drop-radar": "Drop Radar"
+  },
+  "thresholds_days": { "active": 7, "quiet": 30 }
+}
