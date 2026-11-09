@@ -12,7 +12,7 @@ public enum ProjectsDeskWidget {
         store.start()
         return DeskWidgetDescriptor(
             id: "projects",
-            compactSize: CGSize(width: 320, height: 244),
+            compactSize: CGSize(width: 320, height: 216),
             detailSize: CGSize(width: 420, height: 600),
             refresh: { refreshNow(store: store) },
             makeRoot: { host in AnyView(ProjectsRoot(store: store, host: host)) }

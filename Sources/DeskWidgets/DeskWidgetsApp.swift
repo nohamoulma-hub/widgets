@@ -28,6 +28,7 @@ struct DeskWidgetsMain {
         // Pour ajouter un widget: créer sa fiche et son hôte ici, à côté de celui-ci
         let projects = WidgetHost(descriptor: ProjectsDeskWidget.makeDescriptor())
         projects.show()
+        if CommandLine.arguments.contains("--expanded") { projects.expand() }
 
         withExtendedLifetime(projects) {
             app.run()

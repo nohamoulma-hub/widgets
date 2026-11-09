@@ -31,21 +31,38 @@ jobs:
       - name: Lecture des données par le widget
         run: dist/DeskWidgets.app/Contents/MacOS/DeskWidgets --check
 
-      - name: Capture d'écran du widget lancé
+      - name: Fond d'écran bleu, puis capture du résumé et du détail
         continue-on-error: true
         run: |
+          python3 - <<'EOF'
+          import zlib, struct
+          w, h = 1600, 1000
+          raw = (b"\x00" + bytes([30, 90, 200]) * w) * h
+          def chunk(t, d): return struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
+          png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b"")
+          open("/tmp/bleu.png", "wb").write(png)
+          EOF
+          osascript -e 'tell application "System Events" to tell every desktop to set picture to "/tmp/bleu.png"' || echo "fond d'écran non modifiable"
+          sleep 3
           dist/DeskWidgets.app/Contents/MacOS/DeskWidgets &
           sleep 6
-          screencapture -x widget.png
-          ls -la widget.png
-          base64 -i widget.png | fold -w 180 | sed 's/^/IMG /'
+          screencapture -x resume.png
+          base64 -i resume.png | fold -w 180 | sed 's/^/IMGA /'
+          pkill DeskWidgets || true
+          sleep 2
+          dist/DeskWidgets.app/Contents/MacOS/DeskWidgets --expanded &
+          sleep 6
+          screencapture -x detail.png
+          base64 -i detail.png | fold -w 180 | sed 's/^/IMGB /'
           pkill DeskWidgets || true
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: capture
-          path: widget.png
+          name: captures
+          path: |
+            resume.png
+            detail.png
           if-no-files-found: ignore
 
       - name: Archive de l'app

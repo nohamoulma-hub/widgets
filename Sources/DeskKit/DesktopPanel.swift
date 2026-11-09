@@ -238,6 +238,11 @@ public final class WidgetHost {
         panel.orderFrontRegardless()
     }
 
+    // Déplie le widget (option --expanded au lancement, pratique pour les tests)
+    public func expand() {
+        state.expanded = true
+    }
+
     // Retrouve la position précédente, ou se range en haut à droite au premier lancement
     private func placePanel() {
         let name = "DeskWidgets." + descriptor.id
