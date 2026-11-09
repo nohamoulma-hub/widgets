@@ -28,7 +28,13 @@ struct DeskWidgetsMain {
         // Pour ajouter un widget: créer sa fiche et son hôte ici, à côté de celui-ci
         let projects = WidgetHost(descriptor: ProjectsDeskWidget.makeDescriptor())
         projects.show()
-        if CommandLine.arguments.contains("--expanded") { projects.expand() }
+        // Option de test: déplie le widget une seconde après le démarrage, comme le ferait un clic
+        if CommandLine.arguments.contains("--expanded") {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                projects.expand()
+            }
+        }
 
         withExtendedLifetime(projects) {
             app.run()
