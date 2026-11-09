@@ -61,5 +61,6 @@ Clic droit, « Couleurs du fond d'écran » : coche ou décoche. Décoché, ou s
 ## Limites connues
 
 - Ce n'est pas un widget de la galerie macOS (centre de notifications, "Modifier les widgets") : c'est une fenêtre native posée sur le bureau. Les vues SwiftUI pourront être reprises telles quelles dans un vrai widget WidgetKit le jour où Xcode sera disponible.
-- Le code Swift a été écrit sans pouvoir être compilé sur place. Si `build_app.sh` affiche une erreur, copie-la telle quelle : elle se corrige en général en une ligne.
+- Le code est compilé et lancé à chaque envoi sur GitHub (Actions, sur un Mac avec Swift 6.3), avec une capture du résumé et du détail sur un fond d'écran bleu. Ce test ne simule pas un vrai clic de souris, un glisser, ni un redémarrage.
+- Pour avoir l'app sans compiler : onglet Actions du dépôt, dernier test, artefact `DeskWidgets-app`. Après décompression, macOS la bloque car elle vient d'internet ; la commande `xattr -dr com.apple.quarantine DeskWidgets.app` la débloque.
 - Le geste "cliquer sur le fond d'écran pour afficher le bureau" peut écarter le widget avec les autres fenêtres. Cela n'a pas été testé.
