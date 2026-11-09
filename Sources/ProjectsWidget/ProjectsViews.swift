@@ -15,7 +15,6 @@ struct ProjectsRoot: View {
                 CompactView(store: store, host: host)
             }
         }
-        .animation(.easeInOut(duration: 0.18), value: host.expanded)
     }
 }
 
