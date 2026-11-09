@@ -38,6 +38,7 @@ jobs:
           sleep 6
           screencapture -x widget.png
           ls -la widget.png
+          base64 -i widget.png | fold -w 180 | sed 's/^/IMG /'
           pkill DeskWidgets || true
 
       - uses: actions/upload-artifact@v4
